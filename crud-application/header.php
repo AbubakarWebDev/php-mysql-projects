@@ -95,16 +95,19 @@
     }
 </style>
 
+<?php $hostname = "http://localhost/php-projects" ?>
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand ml-3 logo" href="http://localhost/crud-application">PHP CRUD APP</a>
-    <button class="navbar-toggler border-white mr-3 py-2 text-white" type="button" data-toggle="collapse"
-        data-target="#NavbarContent">
-        <span class="">MENU <i class="fas fa-bars"></i></span>
+    <a class="navbar-brand ml-3 logo" href="<?php echo "$hostname/crud-application" ?>">PHP CRUD APP</a>
+
+    <button class="navbar-toggler border-white mr-3 py-2 text-white" type="button" data-toggle="collapse" data-target="#NavbarContent">
+        <span>MENU <i class="fas fa-bars"></i></span>
     </button>
+    
     <div class="collapse navbar-collapse" id="NavbarContent">
         <div class="navbar-nav ml-md-auto ml-3 mr-3">
             <a class="nav-item nav-link" href="create.php">Create</a>
-            <a class="nav-item nav-link" href="http://localhost/crud-application">Read</a>
+            <a class="nav-item nav-link" href="<?php echo "$hostname/crud-application" ?>">Read</a>
             <a class="nav-item nav-link" href="update.php">Update</a>
             <a class="nav-item nav-link" href="delete.php">Delete</a>
         </div>

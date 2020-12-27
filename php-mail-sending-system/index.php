@@ -14,34 +14,36 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <h1 style="font-size: 1.5rem;">PHP Mailing System</h1>
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navBar">
-                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#disclaimer">Disclaimer</a>
-                    </li>
-                </ul>
-            </div>
+
+        <a class="navbar-brand ml-3" href="">
+            <h1 style="font-size: 1.5rem;">PHP Mailing System</h1>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navBar">
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0 mr-lg-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#disclaimer">Disclaimer</a>
+                </li>
+            </ul>
         </div>
     </nav>
+
     <div class="container">
     <hr>
     <h1 class="text-center">PHP Complete Mail Handling</h1>
@@ -125,7 +127,7 @@
                 <h4>Email Message:</h4>
             </div>
             <div class="col-md-9">
-            <textarea class="form-control" name="emailBody" rows="8" placeholder="Enter Email Message" value="<?php if(!empty($emailMessage)) { echo $emailMessage["data"]["emailBody"]; } ?>"></textarea>
+            <textarea class="form-control" name="emailBody" rows="8" placeholder="Enter Email Message"><?php if(!empty($emailMessage)) { echo $emailMessage["data"]["emailBody"]; } ?></textarea>
             <?php if(!empty($emailMessage)) { echo $emailMessage["dataError"]["emailBodyError"]; } ?>
             </div>
         </div>

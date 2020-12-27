@@ -1,4 +1,6 @@
 <?php
+    session_start();
+
     function convert_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
@@ -6,114 +8,7 @@
         return $data;
     }
 
-    function validateFile($inputFileName, $totalFiles, $fileMaxAllowedSize, $fileAllowedExtensions, $fileUploadDir, &$message) {
-        // Check if the Total uploaded Files is greater than one
-        if (is_array($_FILES[$inputFileName]["name"])) {
-            // Loop for Validating All files one by one
-            for ($i=0; $i < $totalFiles; $i++) { 
-                
-                // All File Variables For Validation
-                $file = $_FILES[$inputFileName];
-                $filename = htmlspecialchars(basename($_FILES[$inputFileName]["name"][$i]));
-                $filetype = $_FILES[$inputFileName]["type"][$i];
-                $filesize = $_FILES[$inputFileName]["size"][$i];
-                $fileTmpName = $_FILES[$inputFileName]["tmp_name"][$i];
-                $fileError = $_FILES[$inputFileName]["error"][$i];
-                $fileExtension = pathinfo($filename, PATHINFO_EXTENSION);
-
-                // Check if file was uploaded without errors
-                if(isset($file) && ($fileError == 0)) {
-                    // Verify file extension
-                    if(!array_key_exists($fileExtension, $fileAllowedExtensions)) {
-                        $message["error"] = "<b class='text-danger'>Error: Please select a valid file format.</b>";
-                        break;
-                    }
-                    else {
-                        // Verify file size - 5MB maximum
-                        if ($filesize > $fileMaxAllowedSize) {
-                            $message["error"] = "<b class='text-danger'>Error: File size is larger than the allowed limit.</b>";
-                            break;
-                        }
-                        else {
-                            // Verify MYME type of the file
-                            if (in_array($filetype, $fileAllowedExtensions)){
-                                // Check whether file exists before uploading it
-                                if (file_exists($fileUploadDir . $filename)){
-                                    // echo $filename . " is already exists.";
-                                }
-                                
-                                move_uploaded_file($fileTmpName, $fileUploadDir . $filename);
-                                $message["uploadedFiles"][$i] = $fileUploadDir . $filename;
-                            }
-                            else {
-                                $message["error"] = "<b class='text-danger'>Error: There was a problem uploading your file. Please try again.</b>";
-                                break;
-                            }
-                        }
-                    }
-                }
-                else {
-                    if ($filename == "" && $filesize == 0) {
-                        $message["error"] = "<b class='text-danger'>Error: No File is Selected For Upload.</b>";
-                        break;
-                    }
-                    else {
-                        $message["error"] = "<b class='text-danger'>Error: $fileError </b>";
-                        break;
-                    }
-                }
-            }
-        }
-        else {
-            // All File Variables For Validation
-            $file = $_FILES[$inputFileName];
-            $filename = htmlspecialchars(basename($_FILES[$inputFileName]["name"]));
-            $filetype = $_FILES[$inputFileName]["type"];
-            $filesize = $_FILES[$inputFileName]["size"];
-            $fileTmpName = $_FILES[$inputFileName]["tmp_name"];
-            $fileError = $_FILES[$inputFileName]["error"];
-            $fileExtension = pathinfo($filename, PATHINFO_EXTENSION);
-
-            // Check if file was uploaded without errors
-            if(isset($file) && ($fileError == 0)) {
-                // Verify file extension
-                if(!array_key_exists($fileExtension, $fileAllowedExtensions)) {
-                    $message["error"] = "<b class='text-danger'>Error: Please select a valid file format.</b>";
-                }
-                else {
-                    // Verify file size - 5MB maximum
-                    if ($filesize > $fileMaxAllowedSize) {
-                        $message["error"] = "<b class='text-danger'>Error: File size is larger than the allowed limit.</b>";
-                    }
-                    else {
-                        // Verify MYME type of the file
-                        if (in_array($filetype, $fileAllowedExtensions)){
-                            // Check whether file exists before uploading it
-                            if (file_exists($fileUploadDir . $filename)){
-                                // echo $filename . " is already exists.";
-                            }
-                            
-                            move_uploaded_file($fileTmpName, $fileUploadDir . $filename);
-                            $message["uploadedFiles"][0] = $fileUploadDir . $filename;
-                        }
-                        else {
-                            $message["error"] = "<b class='text-danger'>Error: There was a problem uploading your file. Please try again.</b>";
-                        }
-                    }
-                }
-            }
-            else {
-                if ($filename == "" && $filesize == 0) {
-                    $message["error"] = "<b class='text-danger'>Error: No File is Selected For Upload.</b>";
-                }
-                else {
-                    $message["error"] = "<b class='text-danger'>Error: $fileError </b>";
-                }
-            }
-        }
-    }
-
-    function in_array_all($find,$array){      
+    function in_array_all($find, $array){      
         foreach($array as $key => $value){
           if($value != $find){
             return false;
@@ -121,8 +16,6 @@
         }
         return true;
     }
-
-    include "mail.php";
 
     $data = [
         "receipientEmail" => "",
@@ -199,8 +92,10 @@
                 $dataError["emailBodyError"] = "<b class='text-danger'>At Least 3 Letters and WhiteSpaces Allowed</b>";
             }
         }
-        
-        $allowedExtensions = [
+
+        include "upload.php";
+        $file = $_FILES["files"];
+        $file_allowed_extensions = [
             "jpg" => "image/jpg",
             "jpeg"=> "image/jpeg",
             "png" => "image/png",
@@ -211,29 +106,18 @@
             "xls" => "application/vnd.ms-excel",
             "txt" => "text/plain"
         ];
-        
-        if (is_array($_FILES["files"]["name"])) {
-            $total = count($_FILES["files"]["name"]);
-        }
-        else {
-            $total = 1;
-        }
-        
-        $fileMessage = ["error" => "", "uploadedFiles" => []];
-        validateFile("files", $total, 10 * 1024 * 1024, $allowedExtensions, "uploads/", $fileMessage);
-        
-        if ($fileMessage["error"] == "") {
-            $data["files"] = $fileMessage["uploadedFiles"];
-        }
-        else {
-            $dataError["filesError"] = $fileMessage["error"];
-        }
+        $file_maximum_allowed_size = 5 * 1024 * 1024;   // 5 MB 
+        $file_upload_directory_name = "uploads";
 
-        session_start();
+        $data["files"] = validateFile($file, $file_maximum_allowed_size, $file_allowed_extensions, $file_upload_directory_name, $dataError["filesError"]); 
         
+        $dataError["filesError"] = ($dataError["filesError"] == "<b class='text-danger'>Error: No File is Selected For Upload.</b>")? "": $dataError["filesError"];
+
         if (in_array_all("" , $dataError)) {
-            $mail = false;
 
+            include "mail.php";
+            $mail = false;
+            
             if (empty($data["files"])) {
                 $mail = send_mail($data["receipientEmail"], $data["emailSubject"], $data["emailBody"], $data["senderName"], $data["senderEmail"]);
             }
@@ -252,9 +136,7 @@
         else {
             $_SESSION["ALL_DATA"] = ["data" => $data , "dataError" => $dataError, "email" => ""];
             header("Location: index.php");
-        }
-
-        
+        }        
     }
 ?>
 
