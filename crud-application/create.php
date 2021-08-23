@@ -33,7 +33,7 @@
 
 <body>
 
-    <?php require "header.php"; ?>
+    <?php include_once "header.php"; ?>
 
     <div class="container-lg container-fluid">
         <hr>
@@ -46,7 +46,7 @@
 
         <?php
 
-            include "config.php";
+            include_once "config.php";
 
             function convert_input($data) {
                 $data = trim($data);
@@ -56,8 +56,8 @@
                 return $data;
             }
 
-            $name = $address = $class = $phone = "";
-            $nameError = $addressError = $classError = $phoneError = "";
+            $name = $address = $course = $phone = "";
+            $nameError = $addressError = $courseError = $phoneError = "";
             
             if ((isset($_POST['createBtn']))) {
 
@@ -83,11 +83,11 @@
                     }
                 }
 
-                if (empty($_POST["class"])) {
-                    $classError = "<b class='text-danger'>* Class is Required</b>";
+                if (empty($_POST["course"])) {
+                    $courseError = "<b class='text-danger'>* Class is Required</b>";
                 }
                 else {
-                    $class = convert_input($_POST["class"]);
+                    $course = convert_input($_POST["course"]);
                 }
 
                 if (empty($_POST["phone"])) {
@@ -101,14 +101,14 @@
                     }
                     else {
 
-                        $sql = "SELECT phone FROM student";
+                        $sql = "SELECT stu_phone FROM student";
                         
                         if ($result = mysqli_query($connection, $sql)) 
                         {
                             if(mysqli_num_rows($result) > 0) 
                             {
                                 while ($row = mysqli_fetch_array($result)) {
-                                    if ($row["phone"] == $phone) {
+                                    if ($row["stu_phone"] == $phone) {
                                         $phoneError = "<b class='text-danger'> Phone Number is already registered. Please Try Different Number.</b>";  
                                     }
                                 }
@@ -139,13 +139,13 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="class" class="col-sm-2 col-form-label">Class: </label>
+                    <label for="course" class="col-sm-2 col-form-label">Course: </label>
                     <div class="col-sm-10">
-                        <select name="class" id="class" class="form-select" required>
-                            <option value="">Select Your Class</option>
+                        <select name="course" id="course" class="form-select" required>
+                            <option value="">Select Your Course</option>
                             <?php  
 
-                                $sql = "SELECT * FROM class";
+                                $sql = "SELECT * FROM course";
                                 
                                 if ($result = mysqli_query($connection, $sql)) 
                                 {
@@ -153,21 +153,23 @@
                                     {
                                         while($row = mysqli_fetch_array($result)) {
                                             $selected = "";
-                                            if ($row["cid"] == $class) {
+                                            if ($row["crs_id"] == $course) {
                                                 $selected = "selected";
                                             }
                                             else {
                                                 $selected = "";
                                             }
 
-                                            echo "<option value='{$row['cid']}' $selected>{$row['cname']}</option>";
+                                            echo "<option value='{$row['crs_id']}' $selected>
+                                                    {$row['crs_name']} ({$row['crs_code']})
+                                                </option>";
                                         }
-                                    }   
+                                    }
                                 }            
                             ?>
 
                         </select>
-                        <span id="classError"><?php echo $classError ?></span>
+                        <span id="classError"><?php echo $courseError ?></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
@@ -193,9 +195,9 @@
     <?php
         if (isset($_POST['createBtn'])) {
 
-            if (empty($nameError) && empty($addressError) && empty($classError) && empty($phoneError)) {
+            if (empty($nameError) && empty($addressError) && empty($courseError) && empty($phoneError)) {
 
-                $sql = "INSERT INTO student (name, phone, address, class) VALUES ('{$name}', '{$phone}', '{$address}', '{$class}');";
+                $sql = "INSERT INTO student (stu_name, stu_phone, stu_address, course_id) VALUES ('{$name}', '{$phone}', '{$address}', '{$course}');";
             
                 mysqli_query($connection, $sql) or die("Query Unsuccessfull");
     

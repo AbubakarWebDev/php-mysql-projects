@@ -1,0 +1,7 @@
+Steps Follow For Importing the SQL File On phpMyAdmin (Mysql):
+
+1) Click on new button present on top left corner to Create the Database With Named "crud-application".
+
+2) After Creating Database click to open it and click on import button present on top menu bar.
+
+3) Click on Choose file and select "crud-application.sql" file and click on Go button present on bottom right corner.

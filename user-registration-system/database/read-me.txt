@@ -1,0 +1,15 @@
+Steps Follow For Importing the SQL File On phpMyAdmin (Mysql):
+
+1) Click on new button present on top left corner to Create the Database With Named "user-registration-system".
+
+2) After Creating Database click to open it and click on import button present on top menu bar.
+
+3) Click on Choose file and select "user-registration-system.sql" file and click on Go button present on bottom right corner.
+
+Following Are Users Account Details of this User Registration System. Use to this details to login on Our CMS
+
+----------------------------------
+email				    password
+----------------------------------
+abc123@gmail.com		12345678
+----------------------------------

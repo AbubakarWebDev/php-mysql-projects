@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>AJAX DYNAMIC DEPENDENT SELECT BOX</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- GOOGLE FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Orbitron|Anton|Cabin|Lato|Fjalla+One|Poppins|Montserrat|Roboto&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+
+    <!-- font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" />
+
+</head>
+
+<style>
+    .nav-link {
+        font-family: "Poppins";
+        font-size: 18px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .custom-border-bottom {
+        border-bottom: 1px solid #aaaaaa !important;
+    }
+
+    hr {
+        border-top: 1px solid #aaaaaa;
+    }
+
+    .form-control {
+        border: 1px solid #aaaaaa;
+    }
+
+    label {
+        font-size: 20px;
+    }
+
+    button.dropdown-toggle {
+        font-size: 18px;
+        padding: 10px;
+        border: 1px solid;
+        display: inline-flex;
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <a class="navbar-brand" href="#">
+            <h1 style="font-size: x-large" class="font-weight-bolder">DYNAMIC DEPENDENT SELECT BOX</h1>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="Navbar">
+            <div class="navbar-nav">
+                <a class="nav-link text-white" href="">Home</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#about">About
+                    us</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact
+                    us</a>
+                <a class="nav-link text-white"
+                    href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-lg container-fluid my-5">
+        <hr>
+        <h1 class="text-center text-uppercase font-weight-bold">
+            AJAX DYNAMIC DEPENDENT SELECT BOX By <span class="badge badge-secondary">BKR</span>
+        </h1>
+        <hr>
+
+        <form id="form" class="container-lg container-fluid">
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country" class="selectpicker form-control" data-live-search="true">
+                    <option value="NULL">Select Your Country</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="state">State</label>
+                <select id="state" class="selectpicker form-control" data-live-search="true">
+                    <option value="NULL">Select Your State</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <select id="city" class="selectpicker form-control" data-live-search="true">
+                    <option value="NULL">Select Your City</option>
+                </select>
+            </div>
+            <button id="submitBtn" type="submit" class="btn btn-primary btn-lg w-100">Submit</button>
+        </form>
+        <hr class="mt-4">
+    </div>
+
+
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.selectpicker').selectpicker();
+
+            let checkCountry = checkState = checkCity = false;
+
+            $("#submitBtn").on("click", function (event) {
+                event.preventDefault();
+                if ($("#country option:selected").text() == $("#country option:first-child").text() && !checkCountry) {
+                    if ($('.countryError').length == 0) {
+                        $("#country").parent().after('<b class="selectError countryError text-danger"> * This Field is Required! </b>');
+                        return;
+                    }
+                }
+                else if ($("#state option:selected").text() == $("#state option:first-child").text() && !checkState) {
+                    $(".countryError").remove();
+                    if ($('.stateError').length == 0) {
+                        $("#state").parent().after('<b class="selectError stateError text-danger"> * This Field is Required! </b>');
+                        return;
+                    }
+                }
+                else if ($("#city option:selected").text() == $("#city option:first-child").text() && !checkCity) {
+                    $(".stateError").remove();
+                    if ($('.cityError').length == 0) {
+                        $("#city").parent().after('<b class="selectError cityError text-danger"> * This Field is Required! </b>');
+                        return;
+                    }
+                }
+                else {
+                    $(".selectError").remove();
+                    let dataObject = {
+                        country: {
+                            country_id: $("#country option:selected").val(),
+                            country_name: $("#country option:selected").text()
+                        },
+                        state: {
+                            state_id: $("#state option:selected").val(),
+                            state_name: $("#state option:selected").text()
+                        },
+                        city: {
+                            city_id: $("#city option:selected").val(),
+                            city_name: $("#city option:selected").text()
+                        }
+                    };
+                    console.log(dataObject);
+                }
+            });
+
+            function loadCountries() {
+                let dataObject = { name: "country", id: "NULL" };
+
+                $.ajax({
+                    type: "POST",
+                    url: "ajax-dynamic-dependent-selectbox.php",
+                    data: dataObject,
+                    success: function (response) {
+                        response = (response == "") ?  "" : JSON.parse(response);
+                        if (response.status == "true") {
+                            let appendhtml = "<option value='NULL'>Select Your Country</option>";
+                            $.each(response, function (index, country) {
+                                if (index <= 249) {
+                                    appendhtml += `<option value='${country.id}'>${country.name}</option>`;
+                                }
+                            });
+                            $("#country").html(appendhtml);
+                            $('.selectpicker').selectpicker("refresh");
+                            checkCountry = false;
+                            checkState= false;
+                            checkCity= false;
+                        }
+                        else {
+                            alert("Some Error Occured While Fetching Data From Server");
+                            $("#country").html("<option value='NULL'>Select Your Country</option>");
+                            checkCountry = true;
+                            checkState = true;
+                            checkCity = true;
+                        }
+                    }
+                });
+            }
+
+            function loadStates(country_id) {
+                let dataObject = { name: "state", country_id: country_id };
+
+                $.ajax({
+                    type: "POST",
+                    url: "ajax-dynamic-dependent-selectbox.php",
+                    data: dataObject,
+                    success: function (response) {
+                        response = (response == "") ?  "" : JSON.parse(response);
+                        if (response.status == "true") {
+                            let appendhtml = "<option value='NULL'>Select Your State</option>";
+                            $.each(response, function (index, state) {
+                                if (index <= 4901) {
+                                    appendhtml += `<option value='${state.id}'>${state.name}</option>`;
+                                }
+                            });
+                            $("#state").html(appendhtml);
+                            $('.selectpicker').selectpicker("refresh");
+                            checkState = false;
+                            checkCity = false;
+                        }
+                        else {
+                            alert("State Data Are Not Available On Database For this Country");
+                            $("#state").html("<option value='NULL'>Select Your State</option>");
+                            checkState = true;
+                            checkCity = true;
+                        }
+                    }
+                });
+            }
+
+            function loadCities(state_id) {
+                let dataObject = { name: "city", state_id: state_id };
+
+                $.ajax({
+                    type: "POST",
+                    url: "ajax-dynamic-dependent-selectbox.php",
+                    data: dataObject,
+                    success: function (response) {
+                        response = (response == "") ? "" : JSON.parse(response);
+                        if (response.status == "true") {
+                            let appendhtml = "<option value='NULL'>Select Your city</option>";
+                            $.each(response, function (index, city) {
+                                if (index <= 4901) {
+                                    appendhtml += `<option value='${city.id}'>${city.name}</option>`;
+                                }
+                            });
+                            $("#city").html(appendhtml);
+                            $('.selectpicker').selectpicker("refresh");
+                            checkCity = false;
+                        }
+                        else {
+                            alert("Cities Data Are Not Available On Database For this State");
+                            $("#city").html("<option value='NULL'>Select Your city</option>");
+                            checkCity = true;
+                        }
+                    }
+                });
+            }
+
+            loadCountries();
+
+            $("#country").on("change", function () {
+                loadStates($("#country option:selected").val());
+            });
+
+            $("#state").on("change", function () {
+                $(".countryError").remove();
+                loadCities($("#state option:selected").val());
+            });
+
+            $("#city").on("change", function () {
+                $(".stateError").remove();
+            });
+        });
+    </script>
+</body>
+
+</html>

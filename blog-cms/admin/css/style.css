@@ -1,0 +1,149 @@
+.navbar {
+    background-color: #000000;
+}
+.navbar-dark .navbar-nav .nav-link {
+    font-family: "Roboto", serif;
+    letter-spacing: 1px;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 18px;
+    color: white;
+    text-transform: uppercase;
+    transition: 0.4s ease-in-out;
+}
+
+.user-name {
+    font-family: "Roboto", serif;
+    letter-spacing: 1px;
+    font-weight: 700;
+    font-size: 16px;
+    white-space: nowrap;
+    color: white;
+    text-transform: uppercase;
+    transition: 0.4s ease-in-out;
+}
+
+.user-name a {
+    font-family: "Roboto", serif;
+    letter-spacing: 1px;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 21px;
+    color: white;
+    text-transform: uppercase;
+    transition: 0.4s ease-in-out;
+}
+
+.user-name a:hover {
+    background-color: #cc2d2d;
+    color: white;  
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    background-color: #cc2d2d;
+    color: white;
+}
+.navbar-dark .navbar-toggler {
+    color: white;
+    font-weight: bolder;
+    font-size: 23px;
+    padding: 18px 20px;
+    border-radius: 0px;
+    border: none;
+    background-color: #cc2d2d;
+}
+.navbar-dark .navbar-toggler:focus {
+    box-shadow: 0 0 0 0;
+}
+.tm-link {
+    text-decoration: none;
+    color: #cc2d2d;
+    text-transform: uppercase;
+    font-weight: bolder;
+}
+.copyright-area {
+    width: 100%;
+    height: 50px;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: black;
+}
+
+header .row {
+    height: 100px;
+}
+
+.navbar-brand img {
+    width: 250px;
+    height: 50px;
+}
+
+td, a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+
+td,th {
+    padding: 15px !important;
+    vertical-align: middle;
+    font-size: 18px;
+}
+
+.pagination span {
+    background-color: #000;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    margin-right: 5px;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.pagination span a {
+    color: white;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination span.active {
+    background-color: #cc2d2d;
+}
+
+.pagination span:hover {
+    background-color: #cc2d2d;
+}
+
+.pagination .col-12 div {
+    display: inline-flex;
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: bolder;
+}
+
+.form-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 50px 50px 30px 50px;
+    background-color: #F2F2F2;
+    border-radius: 10px;
+    box-shadow: 0 0 0 18px rgba(0, 0, 0, 0.5), 0 0 18px 0 rgba(0, 0, 0, 0.5);
+}
+
+.form-container label {
+    font-weight: bolder;
+    font-size: 20px;
+}
+
+textarea, input, select, option {
+    font-size: 18px !important;
+}

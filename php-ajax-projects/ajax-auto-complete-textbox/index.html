@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>PHP AUTO COMPLETE TEXTBOX</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- GOOGLE FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Orbitron|Anton|Cabin|Lato|Fjalla+One|Poppins|Montserrat|Roboto&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+
+    <!-- Jquery UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+</head>
+
+<style>
+    .nav-link {
+        font-family: "Poppins";
+        font-size: 18px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    hr {
+        border-top: 1px solid #aaaaaa;
+    }
+
+    .form-control {
+        border: 1px solid #aaaaaa;
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <a class="navbar-brand" href="#">
+            <h1 style="font-size: x-large" class="font-weight-bolder">PHP AUTO COMPLETE TEXTBOX</h1>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="Navbar">
+            <div class="navbar-nav">
+                <a class="nav-link text-white" href="">Home</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#about">About
+                    us</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact
+                    us</a>
+                <a class="nav-link text-white"
+                    href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-lg container-fluid my-5">
+        <hr>
+        <h1 class="text-center text-uppercase font-weight-bold">
+            PHP AUTO COMPLETE TEXTBOX By <span class="badge badge-secondary">BKR</span>
+        </h1>
+        <hr>
+        <form class="row justify-content-center">
+            <div class="col-sm-8">
+                <input id="country-box" type="text" class="d-inline-block form-control form-control-lg"
+                    placeholder="Search Country" required>
+            </div>
+            <div class="col-sm-4">
+                <button id="submitBtn" type="submit" class="mt-sm-0 mt-3 w-100 btn btn-lg btn-primary">Submit</button>
+            </div>
+        </form>
+        <hr>
+        <div class='table-responsive'></div>
+    </div>
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#country-box").keyup(function (event) {
+                let countries = [];
+                $(this).autocomplete({
+                    source: countries
+                });
+
+                let searchTerm = $(this).val();
+
+                if (searchTerm != "") {
+                    if ($("#country-box-error").length > 0) {
+                        $("#country-box-error").remove();
+                    }
+                    let dataObject = { searchTerm: searchTerm };
+                    $.ajax({
+                        type: "POST",
+                        url: "ajax-autocomplete-textbox.php",
+                        data: dataObject,
+                        success: function (response) {
+                            response = JSON.parse(response);
+                            if (response.status == true) {
+                                $.each(response, function (index, element) {
+                                    if (index != "status") {
+                                        countries.push(element.name);
+                                    }
+                                });
+                            }
+                            else {
+                                countries = [];
+                                $(this).autocomplete("close");
+                            }
+                        }
+                    });
+                }
+                else {
+                    if ($("#country-box-error").length == 0) {
+                        $("#country-box").after("<b id='country-box-error' class='text-danger'>*This Field is Required!</b>");
+                    }
+                    countries = [];
+                    $(this).autocomplete("close");
+                }
+            });
+
+            $("#submitBtn").on("click", function (event) {
+                event.preventDefault();
+
+                if ($("#country-box").val() != "") {
+                    if ($("#country-box-error").length > 0) {
+                        $("#country-box-error").remove();
+                    }
+                    readData($("#country-box").val());
+                }
+                else {
+                    if ($("#country-box-error").length == 0) {
+                        $("#country-box").after("<b id='country-box-error' class='text-danger'>*This Field is Required!</b>");
+                    }
+                }
+            });
+
+            function readData(searchTerm) {
+                let dataObject = { searchTerm: searchTerm };
+                $.ajax({
+                    type: "POST",
+                    url: "ajax-autocomplete-textbox.php",
+                    data: dataObject,
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        if (response.status == false) {
+                            $(".table-responsive").html(`<p style="font-size: xx-large; text-align: center; margin-bottom: 30px; font-weight: bolder;" class="border-dark border-bottom pb-4">Noting to Show Here. No Record is Found</p>`);
+                        }
+                        else {
+                            let html = `
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone Code</th>
+                                        <th>Capital</th>
+                                        <th>Tld</th>
+                                        <th>Native</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body">`;
+                            $.each(response, function (key, value) {
+                                if (key != "status") {
+                                    html +=
+                                    `<tr>
+                                        <td>${value.name}</td>
+                                        <td>${value.phone_code}</td>
+                                        <td>${value.capital}</td>
+                                        <td>${value.tld}</td>
+                                        <td>${value.native}</td>
+                                    </tr>`;
+                                }
+                            });
+                            html += `
+                            </tbody>
+                        </table>`;
+                            $(".table-responsive").html(html);
+                        }
+                    }
+                });
+            }
+        
+        
+        });
+    </script>
+</body>
+
+</html>

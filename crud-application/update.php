@@ -31,7 +31,7 @@
 </style>
 <body>
 
-    <?php require "header.php"; ?>
+    <?php include_once "header.php"; ?>
 
     <div class="container-lg container-fluid">
         <hr>
@@ -44,7 +44,7 @@
 
         <?php 
 
-            include "config.php";
+            include_once "config.php";
 
             function convert_input($data) {
                 $data = trim($data);
@@ -68,23 +68,17 @@
                     }
                     else {
                         
-                        $sql = "SELECT id FROM student";
+                        $sql = "SELECT stu_name FROM student WHERE stu_id = $id";
                         
                         if ($result = mysqli_query($connection, $sql)) 
-                        {
-                            if(mysqli_num_rows($result) > 0) 
-                            {
-                                $arr = [];
-                                while ($row = mysqli_fetch_array($result)) {
-                                    array_push($arr, $row["id"]);
-                                }
-                                
-                                if (!in_array($id, $arr))
-                                {
-                                    $idError = "<b class='text-danger'> This ID is Not Found. Please Try Different ID.</b>";
-                                }
+                        {   
+                            if(!mysqli_num_rows($result)) {
+                                $idError = "<b class='text-danger'> This ID is Not Found. Please Try Different ID.</b>";
                             }   
                         } 
+                        else {
+                            echo "connection faild: " . mysqli_error($connection);     
+                        }
                     }
                 }
             }
@@ -106,12 +100,11 @@
             </form>
 
             <?php
-            
                 if (isset($_POST['showBtn'])) {
 
                     if (empty($idError)) {
 
-                    $sql = "SELECT id, name, phone, class, address FROM student INNER JOIN class where class = cid AND id = $id";
+                    $sql = "SELECT stu_id, stu_name, stu_phone, stu_address, course_id, crs_id, crs_name, crs_code FROM student AS stu INNER JOIN course AS crs where stu.course_id = crs.crs_id AND stu.stu_id = $id";
 
                     if ($result = mysqli_query($connection, $sql)) 
                     {
@@ -125,24 +118,24 @@
                 <div class="mb-3 row">
                     <label for="name" class="col-sm-2 col-form-label">Name: </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name" placeholder="Enter Student Name" name="name" value="<?php echo $row['name'] ?>" required>
+                        <input type="text" class="form-control" id="name" placeholder="Enter Student Name" name="name" value="<?php echo $row['stu_name'] ?>" required>
                         <span class="nameError"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="address" class="col-sm-2 col-form-label">Address: </label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="address" name="address" value="<?php echo $row['address'] ?>" placeholder="Enter Student Address" required>
+                        <input type="text" class="form-control" id="address" name="address" value="<?php echo $row['stu_address'] ?>" placeholder="Enter Student Address" required>
                         <span class="addressError"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="class" class="col-sm-2 col-form-label">Class: </label>
+                    <label for="course" class="col-sm-2 col-form-label">Course: </label>
                     <div class="col-sm-10">
-                        <select name="class" id="class" class="form-select" required>
-                            <option value="NULL">Select Your Class</option>
+                        <select name="course" id="course" class="form-select" required>
+                            <option value="NULL">Select Your Course</option>
                             <?php  
-                                $sql = "SELECT * FROM class";
+                                $sql = "SELECT * FROM course";
                                 
                                 if ($result = mysqli_query($connection, $sql)) 
                                 {
@@ -150,26 +143,31 @@
                                     {
                                         while($innerRow = mysqli_fetch_array($result)) {
                                             $selected = "";
-                                            if ($innerRow["cid"] == $row["class"]) {
+                                            if ($innerRow["crs_id"] == $row["course_id"]) {
                                                 $selected = "selected";
                                             }
                                             else {
                                                 $selected = "";
                                             }
 
-                                            echo "<option value='{$innerRow['cid']}' $selected>{$innerRow['cname']}</option>";
+                                            echo "<option value='{$innerRow['crs_id']}' $selected>
+                                                    {$innerRow['crs_name']} ({$innerRow['crs_code']})
+                                                </option>";
                                         }
                                     }   
-                                }            
+                                }
+                                else {
+                                    echo "connection faild: " . mysqli_error($connection);     
+                                }          
                                 ?>
                         </select>
-                        <span class="studentClassError"></span>
+                        <span class="courseError"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="phone" class="col-sm-2 col-form-label">Phone: </label>
                     <div class="col-sm-10">
-                        <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter Student Phone" required value="<?php echo $row['phone'] ?>">
+                        <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter Student Phone" required value="<?php echo $row['stu_phone'] ?>">
                         <span class="phoneError"></span>
                     </div>
                 </div>
@@ -181,6 +179,7 @@
                 <input type="hidden" name="checkUpdate" value="checkUpdate">
             </form>
 
+                            
             <?php } } } } } ?>
         </div>
 
@@ -206,56 +205,65 @@
             }, true);
         }
 
-        addLiveEventListeners("#updateBtn", "click" , function (event) {
-
+        addLiveEventListeners("#updateBtn", "click" , function (event) 
+        {
             event.preventDefault();
-
+        
             let name = document.getElementById("name");
             let address = document.getElementById("address");
-            let studentClass = document.getElementById("class");
+            let course = document.getElementById("course");
             let phone = document.getElementById("phone");
             
             let nameError = document.querySelector(".nameError");
             let addressError = document.querySelector(".addressError");
-            let studentClassError = document.querySelector(".studentClassError");
+            let courseError = document.querySelector(".courseError");
             let phoneError = document.querySelector(".phoneError");
             
-            let check = {"name": false, "address": false, "studentClass": false, "phone": false }; 
+            let check = {"name": false, "address": false, "course": false, "phone": false }; 
             
             let regxForName = /^[a-zA-Z0-9 ]{2,20}$/;
             let regxForAddress = /^[a-zA-Z0-9 ]{2,225}$/;
             let regxForPhone = /^[0-9]{11}$/;
 
-            <?php  
-
-                $sql = "SELECT phone FROM student INNER JOIN class where class = cid AND id = $id";
+            <?php
+                $sql = "SELECT stu_phone FROM student INNER JOIN course WHERE course_id = crs_id AND stu_id = $id";
 
                 $currentphone = "";
-
-                if ($result = mysqli_query($connection, $sql)) 
-                {
-                    if(mysqli_num_rows($result) > 0) 
+                
+                if (!empty($id)) {
+                    if ($result = mysqli_query($connection, $sql)) 
                     {
-                        while ($row = mysqli_fetch_array($result)) {
-                            $currentphone = $row["phone"]; 
+                        if(mysqli_num_rows($result) > 0) 
+                        {
+                            while ($row = mysqli_fetch_array($result)) {
+                                $currentphone = $row["stu_phone"]; 
+                            }
                         }
+                    }
+                    else {
+                        echo "connection faild: " . mysqli_error($connection);     
                     }
                 }
             
-                $sql = "SELECT phone FROM student";
+                $sql = "SELECT stu_phone FROM student;";
 
-                echo "let dbphone = []; let currentphone = '$currentphone';";
+                echo "let dbphone = [];
+                      let currentphone = '$currentphone';";
                 
                 if ($result = mysqli_query($connection, $sql)) 
                 {
                     if(mysqli_num_rows($result) > 0) 
                     {
                         while($row = mysqli_fetch_array($result)) {
-                            echo "dbphone.push('{$row['phone']}');"; 
+                            echo "\n\t\t\t\t\t\tdbphone.push('{$row['stu_phone']}');";
                         }
                     }   
-                }            
+                }
+                else {
+                    echo "connection faild: " . mysqli_error($connection);     
+                }               
             ?>
+            
             
             for( var i = 0; i < dbphone.length; i++) { 
                 if ( dbphone[i] == currentphone) { 
@@ -296,14 +304,16 @@
                 }
             }
             
-            if (studentClass.value == "") {
-                studentClassError.innerHTML = `<b class="text-danger">Error: Please Select Options From Any One of Them.</b>`;
-                check["studentClass"] = false;
+            if (course.value == "" || course.value == "NULL") {
+                courseError.innerHTML = `<b class="text-danger">Error: Please Select Options From Any One of Them.</b>`;
+                check["course"] = false;
             }
-            else if (studentClass.value != "NULL") {
-                studentClassError.innerHTML = "";
-                check["studentClass"] = true;
+            else if (course.value != "NULL") {
+                courseError.innerHTML = "";
+                check["course"] = true;
             }
+
+            console.log(check);
 
             if (Object.values(check).every((elem)=> {return elem == true})) {
                 document.getElementById("updateForm").submit();

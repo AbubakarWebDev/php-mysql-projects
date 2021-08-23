@@ -132,7 +132,7 @@ session_start();
         if (isset($_POST['signupBtn'])) {
 
             if (empty($password1Error) && empty($password2Error)) {
-                $sql = "UPDATE signup SET password = '$password1' WHERE token = '$token'";
+                $sql = "UPDATE users SET password = '$password1' WHERE token = '$token'";
                 
                 if (mysqli_query($connection, $sql)) {
                     $_SESSION["message"] = "Your New Password Has Been Updated";

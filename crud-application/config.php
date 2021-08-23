@@ -14,6 +14,9 @@ define( 'DB_PASSWORD', '' );
 /** MySQL hostname */
 define( 'DB_HOST', 'localhost' );
 
+/** Website hostname */
+$hostname = "https://localhost/php-projects/crud-application";
+
 /** Establishing Connection With MySQL */
 $connection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) or die("<script>alert('Connection With Database Failed')</script>");
 

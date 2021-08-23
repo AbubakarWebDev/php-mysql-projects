@@ -55,7 +55,7 @@
                     $email_error = "<b class='text-danger'>Invalid Email Format. Please Enter Again</b>";
                 }
                 else {
-                    $sql = "SELECT email FROM users WHERE email = '$email' AND status = 'verified'";
+                    $sql = "SELECT email FROM users WHERE email = '$email' AND validity = 'valid'";
                     
                     if ($result = mysqli_query($connection, $sql)) 
                     {
@@ -112,10 +112,10 @@
 
         if (empty($email_error)) {
             
-            $sql = "SELECT name, token FROM signup WHERE email = '$email'";
+            $sql = "SELECT name, token FROM users WHERE email = '$email'";
             
-            if ($result = mysqli_query($connection, $sql)) {
-
+            if ($result = mysqli_query($connection, $sql)) 
+            {
                 $row = mysqli_fetch_array($result);
                 $name = $row['name'];
                 $token = $row['token'];
@@ -125,7 +125,7 @@
                 $subject = "Password Reset Email";
                 $senderName = "WEB DEV";
                 $senderEmail = "90tricks90@gmail.com";
-                $verificationLink = "http://localhost/user-registration/reset-password.php?token=$token";
+                $verificationLink = "$hostname/reset-password.php?token=$token";
                 $message = "";
                 
                 include "mail.php";
@@ -135,6 +135,9 @@
                 if (send_mail($to, $subject, $message, $senderName, $senderEmail)) {
                     $_SESSION["message"] = "Check Your Mail to Reset Your Account Password";
                     echo "showMessage('#message', 'warning', 'Please!', '{$_SESSION["message"]}');location.href = 'login.php'";  
+                }
+                else {
+                    echo "showMessage('#message', 'danger', 'Error!', 'Some Error Occured. Please Try Again!');"; 
                 }
             }
         }

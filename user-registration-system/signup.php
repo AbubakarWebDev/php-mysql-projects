@@ -100,7 +100,7 @@
                     $emailError = "<b class='text-danger'>Invalid Email Format. Please Enter Again</b>";
                 }
                 else {
-                    $sql = "SELECT email FROM signup WHERE email = '$email'";
+                    $sql = "SELECT email FROM users WHERE email = '$email'";
                     
                     if ($result = mysqli_query($connection, $sql)) 
                     {
@@ -123,7 +123,7 @@
                 }
                 else {
 
-                    $sql = "SELECT phone FROM signup WHERE phone = '$phone'";
+                    $sql = "SELECT phone FROM users WHERE phone = '$phone'";
                     
                     if ($result = mysqli_query($connection, $sql)) 
                     {
@@ -167,14 +167,14 @@
         <article class="card-body">
             <h4 class="card-title mt-3 text-center">Create Account</h4>
             <p class="text-center">Get started with your free account</p>
-            <p>
+            <!-- <p>
                 <a href="" class="btn btn-block btn-twitter"> <i class="fab fa-twitter"></i>   Login via Twitter</a>
                 <a href="" class="btn btn-block btn-facebook"> <i class="fab fa-facebook-f"></i>   Login via
                     facebook</a>
             </p>
             <p class="divider-text">
                 <span class="bg-light">OR</span>
-            </p>
+            </p> -->
             <div id="message"></div>
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>">
                 <span><?php echo $nameError ?></span>
@@ -244,31 +244,35 @@
     }
 
     <?php
-        if (isset($_POST['signupBtn'])) {
-
-            if (empty($nameError) && empty($emailError) && empty($phoneError) && empty($password1Error) && empty($password2Error)) {
-
+        if (isset($_POST['signupBtn'])) 
+        {
+            if (empty($nameError) && empty($emailError) && empty($phoneError) && empty($password1Error) && empty($password2Error)) 
+            {
                 $token = bin2hex(random_bytes(15));
 
-                $sql = "INSERT INTO signup (name, email, phone, password, token, validity) VALUES ('{$name}', '{$email}', '{$phone}', '{$password1}', '{$token}', 'invalid');";
-            
-               if (mysqli_query($connection, $sql)) {
-                   $to = $email;
-                   $subject = "Verify Your Email Account";
-                   $senderName = "WEB DEV";
-                   $senderEmail = "90tricks90@gmail.com";
-                   $verificationLink = "http://localhost/user-registration/activate.php?token=$token";
-                   $message = "";
+                $sql = "INSERT INTO users (name, email, phone, password, token, validity) VALUES ('{$name}', '{$email}', '{$phone}', '{$password1}', '{$token}', 'invalid');";
+                
+                if (mysqli_query($connection, $sql) or die("Query Unsuccessfull")) 
+                {
+                    $to = $email;
+                    $subject = "Verify Your Email Account";
+                    $senderName = "WEB DEV";
+                    $senderEmail = "90tricks90@gmail.com";
+                    $verificationLink = "$hostname/activate.php?token=$token";
+                    $message = "";
 
-                   include "mail.php";
+                    include "mail.php";
+                        
+                    activation_message($message, $name, $verificationLink);
 
-                   mail_message($message, $name, $verificationLink);
-
-                   if (send_mail($to, $subject, $message, $senderName, $senderEmail)) {
+                    if (send_mail($to, $subject, $message, $senderName, $senderEmail)) {
                         $_SESSION["message"] = "Check Your Mail to Verify Your Account! $email";
                         echo "showMessage('#message', 'warning', 'Congratulations!', 'Your Account is Created Successfully.{$_SESSION["message"]}');location.href = 'login.php'";  
-                   }
-               }
+                    }
+                    else {
+                        echo "showMessage('#message', 'danger', 'Error!', 'Some Error Occured While Sending Mail. Please Try Again!');"; 
+                    }
+                }
             }
             else {
                 echo "showMessage('#message', 'danger', 'Error!', 'Some Error Occured. Please Try Again!');"; 

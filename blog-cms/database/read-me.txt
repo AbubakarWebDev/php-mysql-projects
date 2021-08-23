@@ -1,0 +1,21 @@
+Steps Follow For Importing the SQL File On phpMyAdmin (Mysql):
+
+1) Click on new button present on top left corner to Create the Database With Named "blog-cms".
+
+2) After Creating Database click to open it and click on import button present on top menu bar.
+
+3) Click on Choose file and select "blog-cms.sql" file and click on Go button present on bottom right corner.
+
+Following Are Users Account Details of this Blog CMS. Use to this details to login on Our CMS
+
+----------------------------------------
+username		role			password
+----------------------------------------
+hanzala			admin			12345678
+abubakar		admin			12345678
+samar			admin			12345678
+hassan			subscriber		12345678
+huzaifa			subscriber		12345678
+bkr			    subscriber		12345678
+abuzar			subscriber		12345678
+----------------------------------------

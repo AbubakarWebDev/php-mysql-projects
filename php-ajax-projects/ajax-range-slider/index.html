@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>AJAX RANGE SLIDER</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- GOOGLE FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Orbitron|Anton|Cabin|Lato|Fjalla+One|Poppins|Montserrat|Roboto&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+
+    <!-- Jquery UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+</head>
+
+<style>
+    .nav-link {
+        font-family: "Poppins";
+        font-size: 18px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    hr {
+        border-top: 1px solid #aaaaaa;
+    }
+
+    .form-control {
+        border: 1px solid #aaaaaa;
+    }
+
+    .sliderValues {
+        font-family: "Roboto", Poppins, Montserrat, serif;
+        font-size: 25px;
+        text-transform: uppercase;
+        font-weight: bolder;
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    #slider-range {
+        height: 25px;
+        background: #f1f1f1;
+        border: 1px solid #a0a0a0;
+    }
+
+    div.ui-slider-range {
+        height: 25px;
+        background: rgb(255, 130, 0);
+    }
+
+    span.ui-slider-handle:first-of-type {
+        height: 33px;
+        width: 28px;
+        border: 2px solid;
+        background: rgb(0, 255, 120);
+        cursor: -webkit-grab;
+        cursor: grab;
+    }
+
+    span.ui-slider-handle:last-of-type {
+        height: 33px;
+        width: 28px;
+        border: 2px solid;
+        background: rgb(0, 255, 120);
+        cursor: -webkit-grab;
+        cursor: grab;
+    }
+
+    #amount {
+        color: rgb(255, 130, 0);
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <a class="navbar-brand" href="#">
+            <h1 style="font-size: x-large" class="font-weight-bolder">AJAX RANGE SLIDER</h1>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="Navbar">
+            <div class="navbar-nav">
+                <a class="nav-link text-white" href="">Home</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#about">About
+                    us</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact
+                    us</a>
+                <a class="nav-link text-white"
+                    href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-lg container-fluid my-5">
+        <hr>
+        <h1 class="text-center text-uppercase font-weight-bold">
+            PHP AJAX RANGE SLIDER By <span class="badge badge-secondary">BKR</span>
+        </h1>
+        <hr class="mb-5">
+        <div id="slider-range"></div>
+        <p class="sliderValues">
+            <label for="amount">Countries Range:</label>
+            <span id="amount"></span>
+        </p>
+        <hr class="mt-4">
+        <div class='table-responsive'></div>
+    </div>
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function initializeSlider(range1, range2) {
+                $("#slider-range").slider({
+                    range: true,
+                    min: 1,
+                    max: 250,
+                    values: [range1, range2],
+                    slide: function (event, ui) {
+                        $("#amount").html(`${ui.values[0]} - ${ui.values[1]}`);
+                        readData(ui.values[0], ui.values[1]);
+                    }
+                });
+
+                $("#amount").html($("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
+                readData(range1, range2);
+            }
+
+            function readData(range1, range2) {
+                let dataObject = { range1: range1, range2: range2 };
+                $.ajax({
+                    type: "POST",
+                    url: "ajax-range-slider.php",
+                    data: dataObject,
+                    success: function (response) {
+                        response = JSON.parse(response);
+                        if (response.status == false) {
+                            $(".table-responsive").html(`<p style="font-size: xx-large; text-align: center; margin-bottom: 30px; font-weight: bolder;" class='pb-0 mb-1'>Noting to Show Here. No Record is Found</p><hr />`);
+                        }
+                        else {
+                            let html = `
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Sr.No</th>
+                                        <th>Name</th>
+                                        <th>Phone Code</th>
+                                        <th>Capital</th>
+                                        <th>Tld</th>
+                                        <th>Native</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body">`;
+                            $.each(response, function (key, value) {
+                                if (key != "status") {
+                                    html +=
+                                        `<tr>
+                                        <td>${key + 1}</td>
+                                        <td>${value.name}</td>
+                                        <td>${value.phone_code}</td>
+                                        <td>${value.capital}</td>
+                                        <td>${value.tld}</td>
+                                        <td>${value.native}</td>
+                                    </tr>`;
+                                }
+                            });
+                            html += `
+                            </tbody>
+                        </table>`;
+                            $(".table-responsive").html(html);
+                        }
+                    }
+                });
+            }
+
+            initializeSlider(80, 170);
+        });
+    </script>
+</body>
+
+</html>

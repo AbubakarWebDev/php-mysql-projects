@@ -60,8 +60,7 @@ function send_multi_attach_mail($to, $subject, $message, $senderName, $senderEma
     } 
 }
 
-function send_mail($to, $subject, $message, $senderName, $senderEmail, $cc = "", $bcc = "") {
-    
+function send_mail($to, $subject, $message, $senderName, $senderEmail, $cc = "", $bcc = "") {        
     $headers = [
         "MIME-Version: 1.0",
         "Content-type: text/html; charset=iso-8859-1", 

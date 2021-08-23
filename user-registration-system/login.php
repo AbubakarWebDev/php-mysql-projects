@@ -92,7 +92,7 @@
                     $emailError = "<b class='text-danger'>Invalid Email Format. Please Enter Again</b>";
                 }
                 else {
-                    $sql = "SELECT email FROM signup WHERE email = '$email' AND validity = 'valid'";
+                    $sql = "SELECT email FROM users WHERE email = '$email' AND validity = 'valid'";
                     
                     if ($result = mysqli_query($connection, $sql)) 
                     {
@@ -114,7 +114,7 @@
                     $passwordError = "<b class='text-danger'>Password Must Contains At Least 8 Characters</b>";
                 }
                 else if (empty($emailError)) {
-                    $sql = "SELECT password FROM signup WHERE email = '$email' AND validity = 'valid'";
+                    $sql = "SELECT password FROM users WHERE email = '$email' AND validity = 'valid'";
                     
                     if ($result = mysqli_query($connection, $sql)) 
                     {
@@ -134,15 +134,15 @@
 
     <div class="card bg-light bg-full">
         <article class="card-body mx-auto">
-            <h4 class="card-title mt-3 text-center">Create Account</h4>
-            <p class="text-center">Get started with your free account</p>
-            <p>
+            <h4 class="card-title mt-3 text-center">Login Your Account</h4>
+            <p class="text-center">Login Your Account and Access Our Resources</p>
+            <!-- <p>
                 <a href="" class="btn btn-block btn-twitter"> <i class="fab fa-twitter"></i>   Login via Twitter</a>
                 <a href="" class="btn btn-block btn-facebook"> <i class="fab fa-facebook-f"></i>   Login via facebook</a>
             </p>
             <p class="divider-text">
                 <span class="bg-light">OR</span>
-            </p>
+            </p> -->
             <div id="message"></div>
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>">
                 <span><?php echo $emailError ?></span>
@@ -193,7 +193,7 @@
 
             if (empty($emailError) && empty($passwordError)) {
 
-                $sql = "SELECT name FROM signup WHERE email = '$email'";
+                $sql = "SELECT name FROM users WHERE email = '$email'";
                     
                 if ($result = mysqli_query($connection, $sql)) 
                 {

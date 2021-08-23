@@ -31,7 +31,7 @@
 </style>
 <body>
 
-    <?php require "header.php"; ?>
+    <?php include_once "header.php"; ?>
 
     <div class="container-lg container-fluid">
         <hr>
@@ -44,7 +44,7 @@
 
         <?php 
 
-            include "config.php";
+            include_once "config.php";
 
             function convert_input($data) {
                 $data = trim($data);
@@ -66,26 +66,18 @@
                     if (!preg_match("/^[0-9]{1,2}$/", $id)) {
                         $idError = "<b class='text-danger'>ID Contains at most 2 Numeric characters Allowed</b>";
                     }
-                    else {
-                        
-                        $sql = "SELECT id FROM student";
+                    else { 
+                        $sql = "SELECT stu_name FROM student WHERE stu_id = $id";
                         
                         if ($result = mysqli_query($connection, $sql)) 
-                        {
-                            if(mysqli_num_rows($result) > 0) 
-                            {
-                                $arr = [];
-                                
-                                while ($row = mysqli_fetch_array($result)) {
-                                    array_push($arr, $row["id"]);
-                                }
-                                
-                                if (!in_array($id, $arr))
-                                {
-                                    $idError = "<b class='text-danger'> This ID is Not Found. Please Try Different ID.</b>";
-                                }
+                        {   
+                            if(!mysqli_num_rows($result)) {
+                                $idError = "<b class='text-danger'> This ID is Not Found. Please Try Different ID.</b>";
                             }   
                         } 
+                        else {
+                            echo "connection faild: " . mysqli_error($connection);     
+                        }
                     }
                 }
             }

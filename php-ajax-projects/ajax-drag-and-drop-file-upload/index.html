@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Drag and Drop File Upload</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- GOOGLE FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Orbitron|Anton|Cabin|Lato|Fjalla+One|Poppins|Montserrat|Roboto&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+
+    <!-- DropZone CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.8.1/dropzone.min.css">
+</head>
+<style>
+    .dropzone {
+        background: white;
+        border-radius: 5px;
+        border: 2px dashed rgb(0, 135, 247);
+        border-image: none;
+        padding: 20px;
+        font-size: 18px;
+        max-width: 805px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .dz-button {
+        font-size: 20px !important;
+        font-weight: bolder !important;
+        text-transform: capitalize;
+        margin-bottom: 15px;
+    }
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <h1 style="font-size: 1.5rem;">Drop Zone File Upload</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar"
+                aria-controls="navBar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navBar">
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="https://abubakarwebdev.github.io/webapplications/#disclaimer">Disclaimer</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <hr>
+        <h1 class="text-center">Ajax Drap and Drop File Upload</h1>
+        <hr>
+        <h6 class="text-center"><strong>Note:</strong> Only jpg, jpeg, gif, png file formats allowed to a max size of
+            5MB.</h6>
+        <hr>
+        <div>
+            <div id="message"></div>
+            <form class="dropzone needsclick dz-clickable" id="ajaxFileUpload">
+                <div class="dz-message needsclick">
+                    <button type="button" class="dz-button"> Drop files here or click to Upload </button>
+                    <div>After Selecting All Of Your Files Click On Upload Button For Uploading All These Files.</div>
+                </div>
+                <div class="dropzone-previews"></div>
+                <div class="fallback">
+                    <input name="file" type="file" multiple />
+                </div>
+            </form>
+            <div class="text-center"><button id="uploadBtn" class="btn btn-primary mt-3">Upload File</button></div>
+        </div>
+        <hr>
+        <div id="imgGallery" class="text-center"></div>
+    </div>
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- DropZone JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.8.1/dropzone.min.js"></script>
+
+    <script>
+        function showMessage(selector, type, slogan, mymassage) {
+            let massage = document.querySelector(selector);
+            massage.innerHTML =
+                `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <strong>${slogan}</strong> ${mymassage}.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>`;
+        }
+
+        var myDropzone = new Dropzone("#ajaxFileUpload", {
+            url: "ajax-file-upload.php",    // URL where the uploaded file will handled
+            method: "POST",                 // Server Request Method
+            uploadMultiple: true,           // Multiple Files Are Used
+            thumbnailWidth: 120,            // File Preview Thumbnail Width
+            thumbnailHeight: 120,           // File Preview Thumbnail Height
+            maxFiles: 5,                    // Maximum 5 files for uploading
+            filesizeBase: 1000,             // File size Base value means 1MB = 1000 Kilo Bytes
+            maxFilesize: 5,                 // Maximum File Size is maxFilesize * filesizeBase = 5 * 1000 = 5000 Kilo Bytes = 5MB
+            autoProcessQueue: false,        // Auto Uploading is False When we click on upload then start uploading the files on server
+            parallelUploads: 2,             // 5 files are parallel Uploads to server at a time
+            paramName: "photo",             // Value of name attribute of the file input that gets transferred.
+            addRemoveLinks: true,           // It will add a link to every file preview to remove or cancel
+            acceptedFiles: "image/jpg, image/jpeg, image/gif, image/png",   // Accepted File For Uploading
+
+            success: function (file, response) {
+                response = JSON.parse(response);
+                if (response.status == true && response.errorMessage == "") {
+                    showMessage("#message", "warning", "Congratulations!", `File is Uploaded Successfully!`);
+                    readFiles();
+                }
+                else {
+                    showMessage("#message", "danger", "", `${response.errorMessage}`);
+                }
+            }
+        });
+
+        function readFiles() {
+            $.ajax({
+                type: "POST",
+                url: "ajax-read-directory.php",
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.status == true) {
+                        html = "";
+                        $.each(response, function (index, element) {
+                            if (index != "status") {
+                                html += `
+                                <div class="card m-3" style="width:18rem; display:inline-block;">
+                                    <img src="uploads/${element.file}" class="card-img-top">
+                                    <div class="card-body">
+                                        <a href="uploads/${element.file}" class="btn btn-lg mb-2 btn-primary">Download Image</a>
+                                        <a href="#" data-file="${element.file}" class="deleteBtn btn btn-lg btn-primary">Delete Image</a>
+                                    </div>
+                                </div>`;
+                            }
+                        });
+                        html += "<hr class='mb-5'>";
+                        $("#imgGallery").html(html);
+                    }
+                    else {
+                        $("#imgGallery").html(`<p>${response.errorMessage}</p><hr class='mb-5'>`);
+                    }
+                }
+            });
+        }
+
+        $(document).on("click", ".deleteBtn", function () {
+            let file = $(this).data("file");
+            let dataObject = { file: file };
+
+            $.ajax({
+                type: "POST",
+                url: "ajax-delete-file.php",
+                data: dataObject,
+                success: function (response) {
+                    response = JSON.parse(response);
+                    if (response.status == "true") {
+                        showMessage("#message", "warning", "Congratulations!", `${response.message}`);
+                        readFiles();
+                    }
+                    else {
+                        showMessage("#message", "danger", "Error!", `${response.message}`);
+                    }
+                }
+            });
+        });
+
+        $("#uploadBtn").click(function () {
+            myDropzone.processQueue();
+        })
+
+        readFiles();
+    </script>
+</body>
+
+</html>

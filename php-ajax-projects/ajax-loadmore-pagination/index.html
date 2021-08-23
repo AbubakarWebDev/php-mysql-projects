@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>PHP AJAX LOAD MORE PAGINATION</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- GOOGLE FONTS -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Orbitron|Anton|Cabin|Lato|Fjalla+One|Poppins|Montserrat|Roboto&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+
+    <!-- font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+
+</head>
+
+<style>
+    .nav-link {
+        font-family: "Poppins";
+        font-size: 18px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+</style>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <a class="navbar-brand" href="#">
+            <h1 style="font-size: x-large" class="font-weight-bolder">PHP AJAX APPLICATION</h1>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="Navbar">
+            <div class="navbar-nav">
+                <a class="nav-link text-white" href="">Home</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#about">About
+                    us</a>
+                <a class="nav-link text-white" href="https://abubakarwebdev.github.io/webapplications/#contact">Contact
+                    us</a>
+                <a class="nav-link text-white"
+                    href="https://abubakarwebdev.github.io/webapplications/#privacypolicy">Privacy Policy</a>
+            </div>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" id="search" type="search" placeholder="Search Here"
+                    aria-label="Search">
+            </form>
+        </div>
+    </nav>
+
+    <div class="container-lg container-fluid my-5">
+        <hr>
+        <h1 class="text-center text-uppercase font-weight-bold">
+            PHP AJAX PAGINATION BY <span class="badge badge-secondary">BKR</span>
+        </h1>
+        <hr>
+        <div class='table-responsive'>
+            <table id="table" class='table table-bordered'>
+                <thead class='thead-dark'>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            function loadTableData(offset) {
+                let dataObject = { offset: offset };
+
+                $.ajax({
+                    type: "POST",
+                    url: "ajax-loadmore-pagination.php",
+                    dataType: "html",
+                    data: dataObject,
+                    success: insertTableHTML
+                });
+            }
+
+            loadTableData();
+
+            function insertTableHTML(response) {
+                if (response != "") {
+                    $("#pagination").remove();
+                    $("#table").append(response);
+                    $("#loadBtn").html("Load More");
+                }
+                else {
+                    $("#loadBtn").html("Finished");
+                    $("#loadBtn").prop("disabled", true);
+                }
+            }
+
+            $(document).on("click", "#loadBtn", function () {
+                let offset = $(this).data("id");
+                loadTableData(offset);
+            })
+        });
+
+        
+    </script>
+</body>
+
+</html>

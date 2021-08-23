@@ -40,11 +40,11 @@
 </style>
 <body>
 
-    <?php require "header.php"; ?>
+    <?php include_once "header.php"; ?>
 
     <div class="container-md">
         <hr>
-        <h1 class="text-center">PHP CRUD APPLICATION <span class="badge bg-secondary">BY BKR</span></h1>
+        <h1 class="text-center font-weight-bolder">PHP CRUD APPLICATION <span class="badge bg-secondary">BY BKR</span></h1>
         <hr>
         <h3 class="text-center">ALL DATABASE RECORDS</h3>
         <center>
@@ -53,9 +53,10 @@
         
         <?php 
 
-            include "config.php";
+            include_once "config.php";
 
-            $sql = "SELECT id, name, phone, cname, address FROM student INNER JOIN class where class = cid";
+            $sql = "SELECT stu_id, stu_name, stu_phone, stu_address, crs_name, crs_code FROM student AS Stu 
+                    INNER JOIN course AS crs where Stu.course_id = crs_id";
 
             if ($result = mysqli_query($connection, $sql)) 
             {
@@ -69,8 +70,8 @@
                                     <th>ID</th>
                                     <th>NAME</th>
                                     <th>ADDRESS</th>
-                                    <th>CLASS</th>
                                     <th>PHONE</th>
+                                    <th>COURSE</th>
                                     <th>ACTION</th>
                                 </tr>
                             </thead>
@@ -79,18 +80,18 @@
                             while($row = mysqli_fetch_array($result)) {
                                 echo "
                                 <tr>
-                                    <td>{$row['id']}</td>
-                                    <td>{$row['name']}</td>
-                                    <td>{$row['address']}</td>
-                                    <td>{$row['cname']}</td>
-                                    <td>{$row['phone']}</td>";
+                                    <td>{$row['stu_id']}</td>
+                                    <td>{$row['stu_name']}</td>
+                                    <td>{$row['stu_address']}</td>
+                                    <td>{$row['stu_phone']}</td>
+                                    <td>{$row['crs_name']} ({$row['crs_code']})</td>";
                                 
                                 echo "<td>
                                         <button type='button' class='btn mb-2 btn-success' id='editBtn'>
-                                            <a href='edit-inline.php?id={$row['id']}' class='text-white text-decoration-none'>EDIT</a>
+                                            <a href='edit-inline.php?id={$row['stu_id']}' class='text-white text-decoration-none'>EDIT</a>
                                         </button>
                                         <button type='button' class='btn mb-2 btn-danger' id='deleteBtn'>
-                                            <a href='delete-inline.php?id={$row['id']}' class='text-white text-decoration-none'>DELETE</a>
+                                            <a href='delete-inline.php?id={$row['stu_id']}' class='text-white text-decoration-none'>DELETE</a>
                                         </button>
                                     </td>
                                 </tr>";
